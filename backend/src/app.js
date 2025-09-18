@@ -17,14 +17,7 @@ app.use(cookieParser());
 // CORS - allow frontend origin to send credentials
 // const FRONTEND_URL = process.env.FRONTEND_URL ;
 app.use(cors({
-  origin: "https://lead-management-system-silk.vercel.app/",
-  credentials: true
-=======
   origin: '*'
->>>>>>> Stashed changes
-=======
-  origin: '*'
->>>>>>> Stashed changes
 }));
 
 app.use('/api/auth', authRoutes);
