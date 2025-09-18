@@ -10,8 +10,8 @@ export default function Login() {
   const submit = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/auth/login", { email, password });
-      await api.get("/auth/me");
+      await api.post(`${import.meta.env.VITE_API_URL}/auth/login`, { email, password });
+      await api.get(`${import.meta.env.VITE_API_URL}/auth/me`);
 
       // ✅ Set logged in flag
       localStorage.setItem("loggedIn", "true");
