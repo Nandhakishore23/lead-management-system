@@ -18,8 +18,12 @@ app.use(cookieParser());
 const FRONTEND_URL = process.env.FRONTEND_URL ;
 app.use(cors({
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   origin: "https://lead-management-system-silk.vercel.app/",
   credentials: true
+=======
+  origin: '*'
+>>>>>>> Stashed changes
 =======
   origin: '*'
 >>>>>>> Stashed changes
