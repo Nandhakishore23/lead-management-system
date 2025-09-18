@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://lead-management-system-api-omega.vercel.app/api'
-//   withCredentials: true
+  baseURL: 'https://lead-management-system-api-omega.vercel.app/api',
+  withCredentials: true
 });
 
 // Optional: redirect on 401

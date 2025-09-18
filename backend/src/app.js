@@ -17,7 +17,8 @@ app.use(cookieParser());
 // CORS - allow frontend origin to send credentials
 // const FRONTEND_URL = process.env.FRONTEND_URL ;
 app.use(cors({
-  origin: '*'
+  origin: '*',
+  credentials: true
 }));
 
 app.use('/api/auth', authRoutes);
