@@ -1,0 +1,5 @@
+@import "tailwindcss";
+body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+input, select, button { margin: 6px 0; padding: 8px; width: 100%; box-sizing: border-box; }
+button { width: auto; padding: 8px 12px; }
+.ag-theme-alpine .ag-cell { display: flex; align-items: center; }
