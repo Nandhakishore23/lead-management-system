@@ -1,346 +1,422 @@
-// // import React, { useEffect, useState } from 'react';
-// // import { AgGridReact } from 'ag-grid-react';
-// // import api from '../services/api';
-// // // import 'ag-grid-community/dist/styles/ag-grid.css';
-// // // import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-// // // ✅ Correct imports for AG Grid 34.x
-// // import "ag-grid-community/styles/ag-grid.css";
-// // import "ag-grid-community/styles/ag-theme-alpine.css";
-
-// // import { useNavigate } from 'react-router-dom';
-
-// // export default function Leads() {
-// //   const [rows, setRows] = useState([]);
-// //   const [page, setPage] = useState(1);
-// //   const [limit] = useState(20);
-// //   const [total, setTotal] = useState(0);
-// //   const [filters, setFilters] = useState({}); // { 'email__contains': 'acme' }
-// //   const nav = useNavigate();
-
-// //   const colDefs = [
-// //     { field: 'first_name' },
-// //     { field: 'last_name' },
-// //     { field: 'email' },
-// //     { field: 'phone' },
-// //     { field: 'company' },
-// //     { field: 'city' },
-// //     { field: 'status' },
-// //     { field: 'source' },
-// //     { field: 'score' },
-// //     { field: 'lead_value' },
-// //     { field: 'is_qualified' },
-// //     { headerName: 'Actions', field: '_id', cellRenderer: params => {
-// //         return `<button data-id="${params.value}" class="edit-btn">Edit</button>
-// //                 <button data-id="${params.value}" class="del-btn">Del</button>`;
-// //       }, suppressSizeToFit: true
-// //     }
-// //   ];
-
-// //   const fetchLeads = async (p = 1, f = filters) => {
-// //     const params = { page: p, limit, ...f };
-// //     const res = await api.get('/leads', { params });
-// //     setRows(res.data.data);
-// //     setPage(res.data.page);
-// //     setTotal(res.data.total);
-// //   };
-
-// //   useEffect(() => { fetchLeads(1); }, []);
-
-// //   // simple DOM delegation for action buttons inside AG Grid
-// //   useEffect(() => {
-// //     const onClick = async (e) => {
-// //       const edit = e.target.closest('.edit-btn');
-// //       const del = e.target.closest('.del-btn');
-// //       if (edit) {
-// //         const id = edit.dataset.id;
-// //         nav(`/leads/${id}/edit`);
-// //       } else if (del) {
-// //         if (!confirm('Delete lead?')) return;
-// //         const id = del.dataset.id;
-// //         try {
-// //           await api.delete(`/leads/${id}`);
-// //           await fetchLeads(page);
-// //         } catch (err) {
-// //           alert(err.response?.data?.message || 'Delete failed');
-// //         }
-// //       }
-// //     };
-// //     document.addEventListener('click', onClick);
-// //     return () => document.removeEventListener('click', onClick);
-// //   }, [page]);
-
-// //   // filter form
-// //   const [emailContains, setEmailContains] = useState('');
-// //   const applyFilter = () => {
-// //     const f = {};
-// //     if (emailContains) f['email__contains'] = emailContains;
-// //     setFilters(f);
-// //     fetchLeads(1, f);
-// //   };
-
-// //   return (
-// //     <div style={{ padding: 12 }}>
-// //       <h2>Leads</h2>
-
-// //       <div style={{ marginBottom: 12 }}>
-// //         <input placeholder="Email contains" value={emailContains} onChange={e => setEmailContains(e.target.value)} />
-// //         <button onClick={applyFilter}>Apply</button>
-// //         <button onClick={() => { setEmailContains(''); setFilters({}); fetchLeads(1, {}); }}>Clear</button>
-// //       </div>
-
-// //       <div className="ag-theme-alpine" style={{ height: 500, width: '100%' }}>
-// //         <AgGridReact
-// //           rowData={rows}
-// //           columnDefs={colDefs}
-// //           domLayout='autoHeight'
-// //           frameworkComponents={{}}
-// //           pagination={false}
-// //           rowSelection='single'
-// //         />
-// //       </div>
-
-// //       <div style={{ marginTop: 12 }}>
-// //         <button onClick={() => { if (page > 1) fetchLeads(page - 1); }}>Prev</button>
-// //         <span style={{ margin: '0 12px' }}>Page {page} — Total {total}</span>
-// //         <button onClick={() => { if (rows.length === limit) fetchLeads(page + 1); }}>Next</button>
-// //       </div>
-// //     </div>
-// //   );
-// // }
-
-
-// import React, { useEffect, useState } from "react";
-// import api from "../services/api";
-// import { useNavigate } from "react-router-dom";
-
-// const Leads = () => {
-//   const [leads, setLeads] = useState([]);
-//   const [page, setPage] = useState(1);
-//   const [limit] = useState(20);
-//   const [totalPages, setTotalPages] = useState(1);
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     (async () => {
-//       try {
-//         const res = await api.get(`/leads?page=${page}&limit=${limit}`);
-//         setLeads(res.data.data);
-//         setTotalPages(res.data.totalPages);
-//       } catch (err) {
-//         if (err.response?.status === 401) {
-//           navigate("/login");
-//         }
-//       }
-//     })();
-//   }, [page, limit, navigate]);
-
-//   return (
-//     <div className="p-4">
-//       <h1 className="text-xl font-bold mb-4">Leads</h1>
-//       <table className="table-auto border-collapse border border-gray-400 w-full text-sm">
-//         <thead>
-//           <tr className="bg-gray-100">
-//             <th className="border border-gray-400 px-2 py-1">First Name</th>
-//             <th className="border border-gray-400 px-2 py-1">Last Name</th>
-//             <th className="border border-gray-400 px-2 py-1">Email</th>
-//             <th className="border border-gray-400 px-2 py-1">Phone</th>
-//             <th className="border border-gray-400 px-2 py-1">Company</th>
-//             <th className="border border-gray-400 px-2 py-1">City</th>
-//             <th className="border border-gray-400 px-2 py-1">State</th>
-//             <th className="border border-gray-400 px-2 py-1">Status</th>
-//             <th className="border border-gray-400 px-2 py-1">Score</th>
-//             <th className="border border-gray-400 px-2 py-1">Lead Value</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {leads.map((lead) => (
-//             <tr key={lead._id} className="hover:bg-gray-50">
-//               <td className="border border-gray-300 px-2 py-1">{lead.first_name}</td>
-//               <td className="border border-gray-300 px-2 py-1">{lead.last_name}</td>
-//               <td className="border border-gray-300 px-2 py-1">{lead.email}</td>
-//               <td className="border border-gray-300 px-2 py-1">{lead.phone}</td>
-//               <td className="border border-gray-300 px-2 py-1">{lead.company}</td>
-//               <td className="border border-gray-300 px-2 py-1">{lead.city}</td>
-//               <td className="border border-gray-300 px-2 py-1">{lead.state}</td>
-//               <td className="border border-gray-300 px-2 py-1">{lead.status}</td>
-//               <td className="border border-gray-300 px-2 py-1">{lead.score}</td>
-//               <td className="border border-gray-300 px-2 py-1">{lead.lead_value}</td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-
-//       {/* Pagination controls */}
-//       <div className="flex justify-between items-center mt-4">
-//         <button
-//           disabled={page === 1}
-//           onClick={() => setPage(page - 1)}
-//           className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
-//         >
-//           Previous
-//         </button>
-//         <span>
-//           Page {page} of {totalPages}
-//         </span>
-//         <button
-//           disabled={page === totalPages}
-//           onClick={() => setPage(page + 1)}
-//           className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
-//         >
-//           Next
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Leads;
-
-
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 
-const Leads = () => {
+const statusOptions = ["new", "contacted", "qualified", "lost", "won"];
+const sourceOptions = [
+  "website",
+  "facebook_ads",
+  "google_ads",
+  "referral",
+  "events",
+  "other",
+];
+
+export default function Leads() {
   const [leads, setLeads] = useState([]);
   const [page, setPage] = useState(1);
   const [limit] = useState(20);
   const [totalPages, setTotalPages] = useState(1);
+  const [filtersOpen, setFiltersOpen] = useState(true); // toggle for mobile
+  const [filters, setFilters] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    company: "",
+    city: "",
+    state: "",
+    status: [],
+    source: [],
+    score_gte: "",
+    score_lte: "",
+    lead_value_gte: "",
+    lead_value_lte: "",
+    is_qualified: false,
+    created_at_from: "",
+    created_at_to: "",
+  });
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await api.get(`/leads?page=${page}&limit=${limit}`);
-        setLeads(res.data.data);
-        setTotalPages(res.data.totalPages);
-      } catch (err) {
-        if (err.response?.status === 401) {
-          navigate("/login");
-        }
+  const handleFilterChange = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      first_name: "",
+      last_name: "",
+      email: "",
+      company: "",
+      city: "",
+      state: "",
+      status: [],
+      source: [],
+      score_gte: "",
+      score_lte: "",
+      lead_value_gte: "",
+      lead_value_lte: "",
+      is_qualified: false,
+      created_at_from: "",
+      created_at_to: "",
+    });
+    setPage(1);
+    fetchLeads();
+  };
+
+  const buildQueryParams = () => {
+    const params = new URLSearchParams();
+
+    ["first_name", "last_name", "email", "company", "city", "state"].forEach(
+      (field) => {
+        if (filters[field]) params.append(`${field}__contains`, filters[field]);
       }
-    })();
-  }, [page, limit, navigate]);
+    );
+
+    if (filters.status.length)
+      params.append(`status__in`, filters.status.join(","));
+    if (filters.source.length)
+      params.append(`source__in`, filters.source.join(","));
+
+    if (filters.score_gte || filters.score_lte) {
+      params.append(
+        `score__between`,
+        `${filters.score_gte || 0},${filters.score_lte || 100}`
+      );
+    }
+    if (filters.lead_value_gte || filters.lead_value_lte) {
+      params.append(
+        `lead_value__between`,
+        `${filters.lead_value_gte || 0},${filters.lead_value_lte || 100000}`
+      );
+    }
+
+    params.append(`is_qualified`, filters.is_qualified);
+
+    if (filters.created_at_from || filters.created_at_to) {
+      const from = filters.created_at_from || "1970-01-01";
+      const to =
+        filters.created_at_to || new Date().toISOString().split("T")[0];
+      params.append(`created_at__between`, `${from},${to}`);
+    }
+
+    params.append("page", page);
+    params.append("limit", limit);
+    return params.toString();
+  };
+
+  const fetchLeads = async () => {
+    try {
+      const query = buildQueryParams();
+      const res = await api.get(`/leads?${query}`);
+      setLeads(res.data.data);
+      setTotalPages(res.data.totalPages);
+    } catch (err) {
+      if (err.response?.status === 401) navigate("/login");
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchLeads();
+  }, [page]);
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6 text-center">📋 Leads Dashboard</h1>
+    <div className="p-4 md:p-6 lg:p-8 bg-gray-50 min-h-screen">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-3xl font-bold text-gray-800">Leads</h1>
+        <button
+          className="md:hidden px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          onClick={() => setFiltersOpen(!filtersOpen)}
+        >
+          {filtersOpen ? "Hide Filters" : "Show Filters"}
+        </button>
+      </div>
 
-      {/* Desktop Table */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="min-w-full table-auto border-collapse shadow-md rounded-xl overflow-hidden">
-          <thead className="bg-indigo-600 text-white sticky top-0">
+      {/* Filters Panel */}
+      {filtersOpen && (
+        <div className="bg-white p-4 rounded-lg shadow mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              "first_name",
+              "last_name",
+              "email",
+              "company",
+              "city",
+              "state",
+            ].map((f) => (
+              <input
+                key={f}
+                type="text"
+                placeholder={f.replace("_", " ").toUpperCase()}
+                value={filters[f]}
+                onChange={(e) => handleFilterChange(f, e.target.value)}
+                className="border rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
+              />
+            ))}
+
+            {/* Status */}
+            <select
+              multiple
+              value={filters.status}
+              onChange={(e) =>
+                handleFilterChange(
+                  "status",
+                  Array.from(e.target.selectedOptions, (o) => o.value)
+                )
+              }
+              className="border rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
+            >
+              {statusOptions.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+
+            {/* Source */}
+            <select
+              multiple
+              value={filters.source}
+              onChange={(e) =>
+                handleFilterChange(
+                  "source",
+                  Array.from(e.target.selectedOptions, (o) => o.value)
+                )
+              }
+              className="border rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
+            >
+              {sourceOptions.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+
+            {/* Numbers */}
+            <input
+              type="number"
+              placeholder="Score Min"
+              value={filters.score_gte}
+              onChange={(e) => handleFilterChange("score_gte", e.target.value)}
+              className="border rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="number"
+              placeholder="Score Max"
+              value={filters.score_lte}
+              onChange={(e) => handleFilterChange("score_lte", e.target.value)}
+              className="border rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="number"
+              placeholder="Lead Value Min"
+              value={filters.lead_value_gte}
+              onChange={(e) =>
+                handleFilterChange("lead_value_gte", e.target.value)
+              }
+              className="border rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="number"
+              placeholder="Lead Value Max"
+              value={filters.lead_value_lte}
+              onChange={(e) =>
+                handleFilterChange("lead_value_lte", e.target.value)
+              }
+              className="border rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
+            />
+
+            {/* Date Range */}
+            <input
+              type="date"
+              value={filters.created_at_from}
+              onChange={(e) =>
+                handleFilterChange("created_at_from", e.target.value)
+              }
+              className="border rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="date"
+              value={filters.created_at_to}
+              onChange={(e) =>
+                handleFilterChange("created_at_to", e.target.value)
+              }
+              className="border rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
+            />
+
+            {/* Qualified */}
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={filters.is_qualified}
+                onChange={(e) =>
+                  handleFilterChange("is_qualified", e.target.checked)
+                }
+              />
+              Qualified
+            </label>
+          </div>
+
+          <div className="flex gap-2 mt-4">
+            <button
+              onClick={() => {
+                setPage(1);
+                fetchLeads();
+              }}
+              className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            >
+              Apply Filters
+            </button>
+            <button
+              onClick={resetFilters}
+              className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden">
+          <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-2 text-left">First Name</th>
-              <th className="px-4 py-2 text-left">Last Name</th>
-              <th className="px-4 py-2 text-left">Email</th>
-              <th className="px-4 py-2 text-left">Phone</th>
-              <th className="px-4 py-2 text-left">Company</th>
-              <th className="px-4 py-2 text-left">City</th>
-              <th className="px-4 py-2 text-left">State</th>
-              <th className="px-4 py-2 text-left">Status</th>
-              <th className="px-4 py-2 text-left">Score</th>
-              <th className="px-4 py-2 text-left">Lead Value</th>
+              {[
+                "First Name",
+                "Last Name",
+                "Email",
+                "Phone",
+                "Company",
+                "City",
+                "State",
+                "Status",
+                "Source",
+                "Score",
+                "Lead Value",
+                "Qualified",
+              ].map((h) => (
+                <th key={h} className="border px-2 py-1 text-left">
+                  {h}
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody className="bg-white">
+          <tbody>
             {leads.map((lead) => (
-              <tr
-                key={lead._id}
-                className="hover:bg-indigo-50 transition-colors duration-200"
-              >
-                <td className="px-4 py-2">{lead.first_name}</td>
-                <td className="px-4 py-2">{lead.last_name}</td>
-                <td className="px-4 py-2">{lead.email}</td>
-                <td className="px-4 py-2">{lead.phone}</td>
-                <td className="px-4 py-2">{lead.company}</td>
-                <td className="px-4 py-2">{lead.city}</td>
-                <td className="px-4 py-2">{lead.state}</td>
-                <td className="px-4 py-2">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      lead.status === "Active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-yellow-100 text-yellow-700"
-                    }`}
-                  >
+              <tr key={lead._id} className="hover:bg-gray-50">
+                <td className="border px-2 py-1">{lead.first_name}</td>
+                <td className="border px-2 py-1">{lead.last_name}</td>
+                <td className="border px-2 py-1">{lead.email}</td>
+                <td className="border px-2 py-1">{lead.phone}</td>
+                <td className="border px-2 py-1">{lead.company}</td>
+                <td className="border px-2 py-1">{lead.city}</td>
+                <td className="border px-2 py-1">{lead.state}</td>
+                <td className="border px-2 py-1">
+                  <span className="px-2 py-1 rounded bg-blue-100 text-blue-800">
                     {lead.status}
                   </span>
                 </td>
-                <td className="px-4 py-2">{lead.score}</td>
-                <td className="px-4 py-2 font-semibold">{lead.lead_value}</td>
+                <td className="border px-2 py-1">
+                  <span className="px-2 py-1 rounded bg-green-100 text-green-800">
+                    {lead.source}
+                  </span>
+                </td>
+                <td className="border px-2 py-1">{lead.score}</td>
+                <td className="border px-2 py-1">{lead.lead_value}</td>
+                <td className="border px-2 py-1">
+                  {lead.is_qualified ? "Yes" : "No"}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* Mobile Cards */}
-      <div className="space-y-4 md:hidden">
-        {leads.map((lead) => (
-          <div
-            key={lead._id}
-            className="bg-white shadow-md rounded-xl p-4 border border-gray-100 hover:shadow-lg transition-shadow"
-          >
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-lg font-semibold">
-                {lead.first_name} {lead.last_name}
-              </h2>
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  lead.status === "Active"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-yellow-100 text-yellow-700"
+      {/* Advanced Pagination */}
+      <div className="flex justify-center mt-6 gap-2 flex-wrap items-center">
+        {/* First Page */}
+        <button
+          onClick={() => setPage(1)}
+          disabled={page === 1}
+          className={`px-3 py-1 rounded ${
+            page === 1
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+        >
+          {"<<"}
+        </button>
+
+        {/* Previous Page */}
+        <button
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          disabled={page === 1}
+          className={`px-3 py-1 rounded ${
+            page === 1
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+        >
+          Prev
+        </button>
+
+        {/* Page Numbers */}
+        {Array.from({ length: totalPages }, (_, i) => i + 1)
+          .filter(
+            (p) =>
+              p === 1 || p === totalPages || (p >= page - 2 && p <= page + 2)
+          )
+          .map((p, idx, arr) => {
+            if (idx > 0 && p - arr[idx - 1] > 1) {
+              return (
+                <span key={`dots-${p}`} className="px-2 py-1 text-gray-500">
+                  ...
+                </span>
+              );
+            }
+            return (
+              <button
+                key={p}
+                onClick={() => setPage(p)}
+                className={`px-3 py-1 rounded ${
+                  p === page
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 hover:bg-gray-300"
                 }`}
               >
-                {lead.status}
-              </span>
-            </div>
-            <p className="text-sm text-gray-600">{lead.email}</p>
-            <p className="text-sm text-gray-600">{lead.phone}</p>
-            <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
-              <p>
-                <span className="font-medium">Company:</span> {lead.company}
-              </p>
-              <p>
-                <span className="font-medium">City:</span> {lead.city}
-              </p>
-              <p>
-                <span className="font-medium">State:</span> {lead.state}
-              </p>
-              <p>
-                <span className="font-medium">Score:</span> {lead.score}
-              </p>
-              <p>
-                <span className="font-medium">Value:</span> {lead.lead_value}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+                {p}
+              </button>
+            );
+          })}
 
-      {/* Pagination controls */}
-      <div className="flex justify-center items-center gap-4 mt-6">
+        {/* Next Page */}
         <button
-          disabled={page === 1}
-          onClick={() => setPage(page - 1)}
-          className="px-4 py-2 bg-indigo-500 text-white rounded-lg disabled:opacity-50 hover:bg-indigo-600 transition-colors"
-        >
-          ⬅ Previous
-        </button>
-        <span className="text-sm text-gray-700">
-          Page {page} of {totalPages}
-        </span>
-        <button
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
           disabled={page === totalPages}
-          onClick={() => setPage(page + 1)}
-          className="px-4 py-2 bg-indigo-500 text-white rounded-lg disabled:opacity-50 hover:bg-indigo-600 transition-colors"
+          className={`px-3 py-1 rounded ${
+            page === totalPages
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
         >
-          Next ➡
+          Next
+        </button>
+
+        {/* Last Page */}
+        <button
+          onClick={() => setPage(totalPages)}
+          disabled={page === totalPages}
+          className={`px-3 py-1 rounded ${
+            page === totalPages
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+        >
+          {">>"}
         </button>
       </div>
     </div>
   );
-};
-
-export default Leads;
+}
