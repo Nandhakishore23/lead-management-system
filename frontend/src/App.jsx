@@ -16,7 +16,7 @@ export default function App() {
         <Route path="/leads" element={<Leads />} />
         <Route path="/leads/new" element={<LeadForm />} />
         <Route path="/leads/:id/edit" element={<LeadForm />} />
-        <Route path="/" element={<Navigate to="/leads" replace />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </div>
   );
