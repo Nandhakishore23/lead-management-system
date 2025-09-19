@@ -20,8 +20,8 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ message: 'Missing fields' });
-  const user = await User.findOne({ email });
-  if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+  // const user = await User.findOne({ email });
+  // if (!user) return res.status(401).json({ message: 'Invalid credentials' });
   const ok = await user.comparePassword(password);
   if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
 
