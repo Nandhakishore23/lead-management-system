@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://lead-management-system-api-omega.vercel.app/api/$1"
+    }
+  ]
+}
